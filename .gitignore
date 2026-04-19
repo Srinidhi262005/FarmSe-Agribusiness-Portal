@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+instance/*.db
+.env
+.vscode/
+model/*.pkl
+app/__pycache__/
+app/ml_model/__pycache__/
+migrations/versions/__pycache__/
+scratch/*.pyc
+
