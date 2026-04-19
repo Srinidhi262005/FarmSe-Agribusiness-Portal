@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FarmSe - The premium digital marketplace connecting farmers and buyers directly.">
+    <title>{% block title %}FarmSe | Agribusiness Portal{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fbf8;
+            color: #212529;
+        }
+        .navbar {
+            background: rgba(46, 125, 50, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+        }
+        .nav-link {
+            font-weight: 500;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #ffd54f !important;
+            transform: translateY(-1px);
+        }
+        .dropdown-menu {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 10px;
+        }
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: 500;
+        }
+        .footer {
+            background: #1b5e20;
+            color: rgba(255,255,255,0.8);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-link:hover {
+            color: #ffd54f;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">
+            <i class="bi bi-flower1"></i> FarmSe
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="bi bi-list fs-1"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.dashboard') }}"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.marketplace') }}"><i class="bi bi-shop me-1"></i> Market</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{{ url_for('main.inbox') }}">
+                            <i class="bi bi-chat-dots-fill me-1"></i>
+                            {% if unread_messages > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                    {{ unread_messages }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{{ url_for('main.notifications') }}">
+                            <i class="bi bi-bell-fill me-1"></i>
+                            {% if unread_notifications > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                    {{ unread_notifications }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown ms-lg-3">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center bg-white bg-opacity-10 rounded-pill px-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle fs-5 me-2"></i> {{ current_user.name.split(' ')[0] }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end mt-3">
+                            <li><a class="dropdown-item" href="{{ url_for('main.profile') }}"><i class="bi bi-person me-2"></i> My Profile</a></li>
+                            {% if current_user.role == 'farmer' %}
+                                <li><a class="dropdown-item" href="{{ url_for('main.my_crops') }}"><i class="bi bi-leaf me-2"></i> My Crops</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{{ url_for('main.orders') }}"><i class="bi bi-bag-check me-2"></i> My Orders</a></li>
+                            {% if current_user.role == 'admin' %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.manage_users') }}"><i class="bi bi-shield-lock me-2"></i> Admin Panel</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                    <li class="nav-item ms-lg-3"><a class="btn btn-warning rounded-pill px-4 fw-bold" href="{{ url_for('auth.register') }}">Join FarmSe</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4 shadow-sm border-0" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer class="footer">
+    <div class="container text-center">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h4 class="fw-bold mb-3">FarmSe</h4>
+                <p>Empowering farmers, serving buyers. The future of agribusiness is here.</p>
+            </div>
+            <div class="col-md-4">
+                <h4 class="fw-bold mb-3">Quick Links</h4>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('main.marketplace') }}" class="footer-link">Marketplace</a></li>
+                    <li><a href="{{ url_for('main.chatbot') }}" class="footer-link">Support Chatbot</a></li>
+                    <li><a href="{{ url_for('main.crop_prediction') }}" class="footer-link">AI Prediction</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="fw-bold mb-3">Legal</h4>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('main.terms') }}" class="footer-link">Terms of Service</a></li>
+                    <li><a href="{{ url_for('main.privacy') }}" class="footer-link">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr class="my-5 opacity-25">
+        <p class="mb-0">&copy; 2025 FarmSe Agribusiness Portal. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>AOS.init({ duration: 800, once: true });</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
