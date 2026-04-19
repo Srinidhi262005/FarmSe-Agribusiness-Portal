@@ -1,11 +1,48 @@
-*.pyc
+# Python cache
 __pycache__/
-instance/*.db
+*.py[cod]
+*$py.class
+
+# Virtual environments
 .env
+.venv/
+venv/
+ENV/
+env/
+
+# Flask instance and local database
+instance/
+*.db
+*.sqlite3
+
+# Logs
+*.log
+*.out
+*.err
+
+# IDE files
 .vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Distribution/build
+dist/
+build/
+*.egg-info/
+
+# Scratch and temp files
+scratch/
+temp_check.txt
+verify_imports.py
+
+# Model artifacts
 model/*.pkl
 app/__pycache__/
 app/ml_model/__pycache__/
 migrations/versions/__pycache__/
-scratch/*.pyc
 

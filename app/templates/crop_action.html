@@ -1,0 +1,134 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ 'Edit Crop' if action == 'edit' else 'Delete Crop' }}
+{% endblock %}
+
+{% block content %}
+{% if action == 'edit' %}
+<style>
+    .form-container {
+        max-width: 500px;
+        margin: 50px auto;
+        background: #ffffffdd;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,128,0,0.2);
+        font-family: Arial, sans-serif;
+    }
+    .form-container h2 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 18px;
+    }
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+    .btn-submit {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 6px;
+        width: 100%;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .btn-submit:hover {
+        background-color: #388e3c;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Edit Crop</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Crop Name</label>
+            <input type="text" name="name" id="name" value="{{ crop.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity (kg)</label>
+            <input type="number" name="quantity" id="quantity" value="{{ crop.quantity }}" required>
+        </div>
+        <div class="form-group">
+            <label for="price">Price (₹)</label>
+            <input type="number" name="price" id="price" value="{{ crop.price }}" required>
+        </div>
+        <div class="form-group">
+            <label for="harvest_date">Harvest Date</label>
+            <input type="date" name="harvest_date" id="harvest_date" value="{{ crop.harvest_date.strftime('%Y-%m-%d') }}" required>
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" name="location" id="location" value="{{ crop.location }}" required>
+        </div>
+        <button type="submit" class="btn-submit">Update Crop</button>
+    </form>
+</div>
+
+{% elif action == 'delete' %}
+<style>
+    .confirm-box {
+        max-width: 500px;
+        margin: 100px auto;
+        padding: 30px;
+        background-color: #fff9f9;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+    }
+    .confirm-box h2 {
+        color: #b71c1c;
+        margin-bottom: 20px;
+    }
+    .confirm-box p {
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+    .btn-danger, .btn-cancel {
+        padding: 8px 18px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        margin: 0 8px;
+    }
+    .btn-danger {
+        background-color: #e53935;
+        color: white;
+    }
+    .btn-danger:hover {
+        background-color: #c62828;
+    }
+    .btn-cancel {
+        background-color: #ccc;
+        color: black;
+    }
+    .btn-cancel:hover {
+        background-color: #aaa;
+    }
+</style>
+
+<div class="confirm-box">
+    <h2>Delete Crop</h2>
+    <p>Are you sure you want to delete the crop "<strong>{{ crop.name }}</strong>"?</p>
+    <form method="POST">
+        <button type="submit" class="btn-danger">Yes, Delete</button>
+        <a href="{{ url_for('main.view_crops') }}" class="btn-cancel">Cancel</a>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

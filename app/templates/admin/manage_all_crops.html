@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage All Crops{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-success mb-4">Manage All Crops</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if crops %}
+        <table class="table table-hover table-bordered">
+            <thead class="table-success">
+                <tr>
+                    <th>ID</th>
+                    <th>Farmer</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Harvest Date</th>
+                    <th>Location</th>
+                    <th>Image</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for crop in crops %}
+                <tr>
+                    <td>{{ crop.id }}</td>
+                    <td>{{ crop.user.username }}</td>
+                    <td>{{ crop.name }}</td>
+                    <td>{{ crop.quantity }}</td>
+                    <td>₹{{ crop.price }}</td>
+                    <td>{{ crop.harvest_date }}</td>
+                    <td>{{ crop.location }}</td>
+                    <td>
+                        {% set image_file = crop_image_name(crop.image, crop.name) %}
+                        <img src="{{ url_for('static', filename='crop_images/' ~ image_file) }}" alt="{{ crop.name }}" height="40">
+                    </td>
+                    <td class="text-center">
+                        <form action="{{ url_for('main.delete_crop_admin', crop_id=crop.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this crop?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted">No crops available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

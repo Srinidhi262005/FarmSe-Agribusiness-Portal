@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Message Farmers{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: url('/static/images/farmer-message.jpg') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .message-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        margin: 50px auto;
+        max-width: 800px;
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+    h2 {
+        color: #2e7d32;
+        text-align: center;
+    }
+    form {
+        margin-top: 20px;
+    }
+    textarea {
+        width: 100%;
+        padding: 10px;
+        resize: vertical;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    select, button {
+        padding: 10px;
+        margin-top: 10px;
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<div class="message-container">
+    <h2>Send a Message to a Farmer</h2>
+
+    <form method="POST">
+        <label for="farmer_id">Select Farmer:</label>
+        <select name="farmer_id" required>
+            {% for farmer in farmers %}
+            <option value="{{ farmer.id }}">{{ farmer.username }} ({{ farmer.email }})</option>
+            {% endfor %}
+        </select>
+
+        <label for="message">Your Message:</label>
+        <textarea name="message" rows="5" placeholder="Type your message here..." required></textarea>
+
+        <button type="submit">Send Message</button>
+    </form>
+</div>
+{% endblock %}
+

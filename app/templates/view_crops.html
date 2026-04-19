@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}My Crops{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('/static/images/farm-bg.jpg');
+        background-size: cover;
+        background-attachment: fixed;
+        color: #2e7d32;
+    }
+
+    .crop-list {
+        background-color: rgba(255,255,255,0.9);
+        border-radius: 15px;
+        padding: 30px;
+        margin: 50px auto;
+        max-width: 900px;
+        box-shadow: 0 5px 15px rgba(0,128,0,0.2);
+    }
+
+    h2 {
+        text-align: center;
+        color: #1b5e20;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    table th, table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ccc;
+    }
+
+    table th {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .btn:hover {
+        background-color: #388e3c;
+    }
+
+    .btn.delete {
+        background-color: #e53935;
+    }
+
+    .btn.delete:hover {
+        background-color: #c62828;
+    }
+</style>
+
+<div class="crop-list">
+    <h2>My Uploaded Crops</h2>
+
+    {% if crops %}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Harvest Date</th>
+            <th>Location</th>
+            <th>Actions</th>
+        </tr>
+        {% for crop in crops %}
+        <tr>
+            <td>{{ crop.name }}</td>
+            <td>{{ crop.quantity }}</td>
+            <td>{{ crop.price }}</td>
+            <td>{{ crop.harvest_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ crop.location }}</td>
+            <td>
+                <div class="btn-group">
+                    <a href="{{ url_for('main.edit_crop', crop_id=crop.id) }}" class="btn">Edit</a>
+                    <a href="{{ url_for('main.delete_crop', crop_id=crop.id) }}" class="btn delete" onclick="return confirm('Are you sure?')">Delete</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No crops uploaded yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

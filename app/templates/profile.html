@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}My Profile | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 40px auto;
+    }
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+    }
+    .profile-header {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        height: 150px;
+        position: relative;
+    }
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #2e7d32;
+        border: 5px solid white;
+        position: absolute;
+        bottom: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .profile-body {
+        padding: 80px 40px 40px;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #444;
+    }
+    .form-control {
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #dee2e6;
+    }
+</style>
+
+<div class="container profile-container">
+    <div class="profile-card shadow-lg" data-aos="fade-up">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+        <div class="profile-body">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold mb-1">{{ current_user.name }}</h2>
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 text-uppercase fw-bold">
+                    {{ current_user.role }}
+                </span>
+            </div>
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        {{ form.name(class="form-control") }}
+                        {% for error in form.name.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        {{ form.username(class="form-control") }}
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Email Address</label>
+                        {{ form.email(class="form-control") }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-success rounded-pill px-5 py-3 fw-bold shadow-sm">
+                        <i class="bi bi-check2-circle"></i> Update My Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

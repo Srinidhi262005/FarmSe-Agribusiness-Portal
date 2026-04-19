@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Crops{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4 text-success">Available Crops in the Marketplace</h2>
+
+    {% if crops %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for crop in crops %}
+                <div class="col">
+                    <div class="card border-success h-100 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            {{ crop.name }}
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Quantity:</strong> {{ crop.quantity }} kg</p>
+                            <p><strong>Price:</strong> ₹{{ crop.price }} per kg</p>
+                            <p><strong>Harvest Date:</strong> {{ crop.harvest_date.strftime('%Y-%m-%d') }}</p>
+                            <p><strong>Location:</strong> {{ crop.location }}</p>
+                            <p><strong>Farmer:</strong> {{ crop.user.username }}</p>
+                        </div>
+                        <div class="card-footer bg-white text-end">
+                            <a href="{{ url_for('main.message_farmers') }}" class="btn btn-outline-success btn-sm">
+                                Message Farmer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center mt-4">
+            No crops available at the moment. Please check back later!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

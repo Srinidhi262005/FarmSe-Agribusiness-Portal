@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Admin Settings</h2>
+<p>Configure your admin settings here.</p>
+{% endblock %}

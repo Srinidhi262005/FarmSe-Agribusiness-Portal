@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Messages | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .inbox-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+    .message-card {
+        background: white;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: 1px solid #f0f4f0;
+        text-decoration: none !important;
+        color: inherit !important;
+        display: block;
+        position: relative;
+    }
+    .message-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border-color: #2e7d32;
+    }
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .unread-pill {
+        background: #2e7d32;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 50px;
+    }
+</style>
+
+<div class="container inbox-container">
+    <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-down">
+        <div>
+            <h2 class="fw-bold text-success mb-1">Your Messages</h2>
+            <p class="text-muted mb-0">Stay connected with your buyers and sellers.</p>
+        </div>
+        <div class="bg-success bg-opacity-10 text-success rounded-pill px-4 py-2 fw-bold">
+            <i class="bi bi-chat-fill"></i> {{ conversations|length }} Active Chats
+        </div>
+    </div>
+
+    {% if conversations %}
+        {% for conv in conversations %}
+            <a href="{{ url_for('main.chat', user_id=conv.user.id) }}" class="message-card p-4 shadow-sm mb-3" data-aos="fade-up">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-4 shadow-sm">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h5 class="fw-bold mb-0">
+                                {{ conv.user.name }}
+                                {% if conv.unread_count > 0 %}
+                                    <span class="unread-pill ms-2">{{ conv.unread_count }} new</span>
+                                {% endif %}
+                            </h5>
+                            <small class="text-muted">{{ conv.latest_message.timestamp.strftime('%b %d, %H:%M') }}</small>
+                        </div>
+                        <p class="{% if conv.unread_count > 0 %}fw-bold text-dark{% else %}text-muted{% endif %} small mb-0 line-clamp-1">
+                            {% if conv.latest_message.sender_id == current_user.id %}
+                                <span class="text-success"><i class="bi bi-check2-all"></i> You:</span>
+                            {% endif %}
+                            {{ conv.latest_message.content|truncate(100) }}
+                        </p>
+                    </div>
+                    <div class="ms-4">
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm" data-aos="zoom-in">
+            <i class="bi bi-chat-dots fs-1 text-muted d-block mb-3"></i>
+            <h4 class="fw-bold">Your inbox is empty</h4>
+            <p class="text-muted">Direct messages between farmers and buyers will appear here.</p>
+            <a href="{{ url_for('main.marketplace') }}" class="btn btn-success rounded-pill px-4 mt-2 shadow-sm">Find Produce</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

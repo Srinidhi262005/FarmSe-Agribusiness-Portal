@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Task Planner | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .task-container {
+        max-width: 1000px;
+        margin: 40px auto;
+    }
+    .task-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        border: none;
+    }
+    .task-item {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #edf2ed;
+        transition: all 0.3s ease;
+    }
+    .task-item:hover {
+        transform: translateX(10px);
+        box-shadow: 0 10px 20px rgba(46, 125, 50, 0.05);
+        border-color: #2e7d32;
+    }
+    .task-date {
+        font-weight: 700;
+        color: #2e7d32;
+        font-size: 0.9rem;
+    }
+    .btn-add-task {
+        background: #2e7d32;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 700;
+        border: none;
+    }
+    .btn-delete {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #dc3545;
+        background: #fff5f5;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-delete:hover {
+        background: #dc3545;
+        color: white;
+    }
+</style>
+
+<div class="container task-container">
+    <div class="row g-4">
+        <!-- Add Task Form -->
+        <div class="col-lg-5">
+            <div class="task-card shadow-lg" data-aos="fade-right">
+                <h3 class="fw-bold mb-4 text-success"><i class="bi bi-calendar-plus"></i> New Task</h3>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Task Title</label>
+                        {{ form.title(class="form-control", placeholder="e.g. Fertilizer Sprinkling") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Due Date</label>
+                        {{ form.due_date(class="form-control", type="date") }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small">Details</label>
+                        {{ form.description(class="form-control", rows="3", placeholder="Add some notes...") }}
+                    </div>
+                    <button type="submit" class="btn btn-add-task w-100 shadow-sm">
+                        <i class="bi bi-plus-lg"></i> Add to Schedule
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Task List -->
+        <div class="col-lg-7">
+            <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-left">
+                <h3 class="fw-bold mb-0">My Schedule</h3>
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">
+                    {{ tasks|length }} Pending
+                </span>
+            </div>
+
+            {% for task in tasks %}
+            <div class="task-item shadow-sm" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex gap-3">
+                        <div class="bg-success bg-opacity-10 text-success p-2 rounded-3 h-100">
+                            <i class="bi bi-check2-square fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">{{ task.title }}</h5>
+                            <div class="task-date mb-2">
+                                <i class="bi bi-clock"></i> {{ task.due_date.strftime('%B %d, %Y') }}
+                            </div>
+                            <p class="text-muted small mb-0">{{ task.description or "No additional notes." }}</p>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ url_for('main.delete_task', task_id=task.id) }}">
+                        <button type="submit" class="btn-delete" title="Mark as Done">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5 bg-white rounded-4 shadow-sm" data-aos="zoom-in">
+                <i class="bi bi-calendar-check fs-1 text-muted mb-3 d-block"></i>
+                <h5 class="fw-bold">Your schedule is clear!</h5>
+                <p class="text-muted">Use the form to add your farming tasks.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

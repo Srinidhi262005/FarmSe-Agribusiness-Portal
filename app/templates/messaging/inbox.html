@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Inbox</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.recipient.label }}<br>
+        {{ form.recipient() }}
+    </p>
+    <p>
+        {{ form.content.label }}<br>
+        {{ form.content(rows=3) }}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+
+<hr>
+
+<ul>
+    {% for msg in messages %}
+    <li>
+        <strong>From:</strong> {{ msg.sender.username }} <br>
+        <strong>At:</strong> {{ msg.timestamp.strftime('%Y-%m-%d %H:%M') }} <br>
+        <p>{{ msg.content }}</p>
+        <a href="{{ url_for('main.chat', user_id=msg.sender.id) }}">Reply</a>
+    </li>
+    {% else %}
+    <p>No messages in inbox.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

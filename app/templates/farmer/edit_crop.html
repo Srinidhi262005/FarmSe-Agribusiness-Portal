@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Edit Crop | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .edit-container {
+        max-width: 800px;
+        margin: 40px auto;
+    }
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        border: none;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #444;
+    }
+    .form-control {
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #dee2e6;
+    }
+    .btn-save {
+        background: #2e7d32;
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-save:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        color: white;
+    }
+</style>
+
+<div class="container edit-container">
+    <div class="form-card shadow-lg" data-aos="fade-up">
+        <h2 class="text-center mb-4"><i class="bi bi-pencil-square text-warning"></i> Edit Your Listing</h2>
+        <p class="text-center text-muted mb-5">Update the details for <strong>{{ crop.name }}</strong>.</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <label class="form-label">Crop Name</label>
+                    {{ form.crop_name(class="form-control") }}
+                    {% for error in form.crop_name.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Quantity (kg)</label>
+                    {{ form.quantity(class="form-control") }}
+                    {% for error in form.quantity.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Price per kg (₹)</label>
+                    {{ form.price(class="form-control") }}
+                    {% for error in form.price.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    {{ form.description(class="form-control", rows="4") }}
+                    {% for error in form.description.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Harvest Date</label>
+                    {{ form.harvest_date(class="form-control", type="date") }}
+                    {% for error in form.harvest_date.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    {{ form.location(class="form-control") }}
+                    {% for error in form.location.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Update Image</label>
+                    {{ form.image(class="form-control", accept="image/*") }}
+                    {% if crop.image %}
+                        <div class="mt-2 text-muted small">
+                            <i class="bi bi-image"></i> Current Image: <strong>{{ crop.image }}</strong>
+                        </div>
+                    {% endif %}
+                    {% for error in form.image.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-save w-100">
+                    <i class="bi bi-check-circle"></i> Save Changes
+                </button>
+                <a href="{{ url_for('main.upload_crop') }}" class="btn btn-link mt-3 text-muted text-decoration-none">
+                    <i class="bi bi-arrow-left"></i> Cancel and Go Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

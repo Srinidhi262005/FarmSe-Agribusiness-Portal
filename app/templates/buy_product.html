@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Buy {{ product.name }} | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .product-container {
+        max-width: 1000px;
+        margin: 40px auto;
+    }
+    .product-card {
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        border: none;
+    }
+    .product-image-container {
+        height: 100%;
+        min-height: 400px;
+        background: #f8fbf8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .price-badge {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 10px 20px;
+        border-radius: 15px;
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+    .farmer-info {
+        background: #f8fbf8;
+        border-radius: 15px;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .quantity-input {
+        border-radius: 15px;
+        padding: 15px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+    }
+    .btn-buy {
+        background: #2e7d32;
+        color: white;
+        padding: 18px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-buy:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+        color: white;
+    }
+    .total-calculation {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2e7d32;
+    }
+</style>
+
+<div class="container product-container">
+    <div class="product-card shadow-lg" data-aos="zoom-in">
+        <div class="row g-0">
+            <!-- Product Image -->
+            <div class="col-lg-5">
+                <div class="product-image-container">
+                    {% set image_file = crop_image_name(product.image, product.name) %}
+                    <img src="{{ url_for('static', filename='crop_images/' ~ image_file) }}" class="product-image" alt="{{ product.name }}">
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="col-lg-7 p-5">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h1 class="fw-bold mb-0">{{ product.name }}</h1>
+                    <div class="price-badge shadow-sm">
+                        ₹{{ product.price }}<span class="fs-6 fw-normal text-muted">/kg</span>
+                    </div>
+                </div>
+                
+                <p class="text-muted mb-4"><i class="bi bi-geo-alt-fill text-danger"></i> {{ product.location }}</p>
+
+                <div class="farmer-info shadow-sm">
+                    <div class="bg-success text-white rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">Farmer</small>
+                        <span class="fw-bold">{{ product.user.name }}</span>
+                    </div>
+                    <a href="{{ url_for('main.chat', user_id=product.user.id) }}" class="btn btn-sm btn-outline-success rounded-pill ms-auto px-3">
+                        <i class="bi bi-chat-text"></i> Chat
+                    </a>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold text-uppercase small text-muted mb-2">About this crop</h6>
+                    <p class="mb-0">{{ product.description or "No detailed description provided by the farmer." }}</p>
+                </div>
+
+                <hr class="my-4 opacity-10">
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="row g-3 align-items-end mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Select Quantity</label>
+                            <div class="input-group">
+                                {{ form.quantity(class="form-control quantity-input", id="qtyInput", value="1", min="1", max=product.quantity) }}
+                                <span class="input-group-text bg-white border-start-0 rounded-end-pill px-3">kg</span>
+                            </div>
+                            <small class="text-muted mt-2 d-block">Available: <strong>{{ product.quantity }} kg</strong></small>
+                            {% for error in form.quantity.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 text-md-end pb-3">
+                            <span class="text-muted small d-block mb-1">Estimated Total</span>
+                            <span class="total-calculation" id="totalPrice">₹{{ product.price }}</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-buy shadow-sm">
+                            <i class="bi bi-cart-check-fill me-2"></i> Proceed to Checkout
+                        </button>
+                        <a href="{{ url_for('main.marketplace') }}" class="btn btn-link text-muted text-decoration-none text-center">
+                            <i class="bi bi-arrow-left"></i> Back to Marketplace
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const pricePerKg = {{ product.price }};
+    const qtyInput = document.getElementById('qtyInput');
+    const totalPrice = document.getElementById('totalPrice');
+
+    qtyInput.addEventListener('input', () => {
+        const total = (qtyInput.value * pricePerKg).toFixed(2);
+        totalPrice.innerText = `₹${total}`;
+    });
+</script>
+{% endblock %}

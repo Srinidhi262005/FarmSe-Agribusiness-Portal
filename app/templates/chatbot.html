@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block title %}FarmSe AI Assistant{% endblock %}
+
+{% block content %}
+<style>
+    .ai-hero {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        padding: 60px 0 120px;
+        color: white;
+        text-align: center;
+    }
+    .chat-wrapper {
+        max-width: 800px;
+        margin: -80px auto 40px;
+        background: white;
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        overflow: hidden;
+        height: 650px;
+        display: flex;
+        flex-direction: column;
+    }
+    .chat-header {
+        background: #f8fbf8;
+        padding: 20px 30px;
+        border-bottom: 1px solid #edf2ed;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .bot-avatar {
+        width: 45px;
+        height: 45px;
+        background: #2e7d32;
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 30px;
+        background: #ffffff;
+    }
+    .message {
+        margin-bottom: 25px;
+        max-width: 80%;
+        position: relative;
+    }
+    .message-content {
+        padding: 15px 20px;
+        border-radius: 20px;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    .user-message {
+        margin-left: auto;
+    }
+    .user-message .message-content {
+        background: #2e7d32;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    .bot-message .message-content {
+        background: #f1f8f1;
+        color: #212529;
+        border-bottom-left-radius: 4px;
+    }
+    .chat-input-area {
+        padding: 20px 30px;
+        background: white;
+        border-top: 1px solid #edf2ed;
+    }
+    .chat-input-wrapper {
+        position: relative;
+    }
+    .chat-input {
+        width: 100%;
+        border-radius: 50px;
+        padding: 15px 60px 15px 25px;
+        border: 2px solid #edf2ed;
+        transition: all 0.3s;
+    }
+    .chat-input:focus {
+        border-color: #2e7d32;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.05);
+    }
+    .send-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #2e7d32;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+    .send-btn:hover {
+        background: #1b5e20;
+        transform: translateY(-50%) scale(1.1);
+    }
+    .typing-indicator {
+        font-size: 0.8rem;
+        color: #2e7d32;
+        margin-top: 5px;
+        display: none;
+    }
+</style>
+
+<div class="ai-hero" data-aos="fade-down">
+    <div class="container">
+        <h1 class="fw-bold display-5">FarmSe AI Assistant</h1>
+        <p class="lead opacity-90">Expert agricultural guidance, 24/7.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="chat-wrapper" data-aos="zoom-in">
+        <div class="chat-header">
+            <div class="bot-avatar shadow-sm">
+                <i class="bi bi-robot"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-0">FarmSe Bot</h5>
+                <span class="text-success small"><i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i> Online</span>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <div class="message-content shadow-sm">
+                    Hello! I'm your FarmSe AI assistant. You can ask me about weather, crop predictions, marketplace tips, or how to use the platform. How can I help you today?
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div id="typingIndicator" class="typing-indicator ms-2 mb-2">
+                <i class="bi bi-pencil-fill me-1"></i> Bot is thinking...
+            </div>
+            <form id="chatForm" class="chat-input-wrapper">
+                <input type="text" id="userInput" class="chat-input" placeholder="Type your message here..." required autocomplete="off">
+                <button type="submit" class="send-btn">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+    const chatMessages = document.getElementById('chatMessages');
+    const typingIndicator = document.getElementById('typingIndicator');
+
+    function appendMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+        messageDiv.innerHTML = `<div class="message-content shadow-sm">${text}</div>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const query = userInput.value.trim();
+        if (!query) return;
+
+        appendMessage(query, 'user');
+        userInput.value = '';
+        typingIndicator.style.display = 'block';
+
+        try {
+            const response = await fetch('{{ url_for("main.chatbot") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            const data = await response.json();
+            
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                appendMessage(data.response, 'bot');
+            }, 600);
+        } catch (error) {
+            typingIndicator.style.display = 'none';
+            appendMessage("I'm sorry, I'm having trouble connecting right now. Please try again later.", 'bot');
+        }
+    });
+</script>
+{% endblock %}
