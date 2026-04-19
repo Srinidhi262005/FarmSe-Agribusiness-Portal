@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block title %}Admin Control Center | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .admin-container {
+        max-width: 1200px;
+        margin: 40px auto;
+    }
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    .chart-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        height: 400px;
+    }
+    .admin-btn {
+        padding: 12px 25px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+</style>
+
+<div class="container admin-container">
+    <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-down">
+        <div>
+            <h2 class="fw-bold text-success mb-1">Admin Control Center</h2>
+            <p class="text-muted mb-0">Platform overview and management.</p>
+        </div>
+        <div class="bg-dark bg-opacity-10 text-dark rounded-pill px-4 py-2 fw-bold">
+            <i class="bi bi-shield-check"></i> System Secure
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+            <div class="stat-card shadow-sm">
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h4 class="fw-bold">{{ user_count }}</h4>
+                <p class="text-muted mb-0">Total Registered Users</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+            <div class="stat-card shadow-sm">
+                <div class="stat-icon bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-flower1"></i>
+                </div>
+                <h4 class="fw-bold">{{ crop_count }}</h4>
+                <p class="text-muted mb-0">Active Crop Listings</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="stat-card shadow-sm">
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                    <i class="bi bi-cart-check-fill"></i>
+                </div>
+                <h4 class="fw-bold">{{ order_count }}</h4>
+                <p class="text-muted mb-0">Completed Transactions</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Analytics Placeholder -->
+        <div class="col-lg-8" data-aos="fade-right">
+            <div class="chart-container shadow-sm">
+                <h5 class="fw-bold mb-4">Platform Growth</h5>
+                <canvas id="platformChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="col-lg-4" data-aos="fade-left">
+            <div class="stat-card shadow-sm h-100">
+                <h5 class="fw-bold mb-4">Management Console</h5>
+                <div class="d-grid gap-3">
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-primary admin-btn text-start">
+                        <i class="bi bi-people me-2"></i> User Directory
+                    </a>
+                    <a href="{{ url_for('admin.manage_crops') }}" class="btn btn-outline-success admin-btn text-start">
+                        <i class="bi bi-flower1 me-2"></i> Marketplace Audit
+                    </a>
+                    <a href="{{ url_for('admin.manage_orders') }}" class="btn btn-outline-warning admin-btn text-start">
+                        <i class="bi bi-receipt me-2"></i> Order Tracking
+                    </a>
+                    <hr>
+                    <button class="btn btn-dark admin-btn">
+                        <i class="bi bi-file-earmark-bar-graph me-2"></i> Export Reports
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('platformChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Marketplace Activity',
+                data: [12, 19, 3, 5, 2, 3],
+                borderColor: '#2e7d32',
+                backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { display: false } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

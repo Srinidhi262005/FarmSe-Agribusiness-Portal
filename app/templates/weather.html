@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Weather Outlook | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .weather-hero {
+        background: linear-gradient(rgba(46, 125, 50, 0.8), rgba(46, 125, 50, 0.8)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 80px 0;
+        color: white;
+        border-radius: 0 0 50px 50px;
+        margin-bottom: -50px;
+    }
+    .weather-card-main {
+        background: white;
+        border-radius: 30px;
+        padding: 40px;
+        border: none;
+        position: relative;
+        z-index: 2;
+    }
+    .forecast-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        border: 1px solid #f0f4f0;
+    }
+    .forecast-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border-color: #2e7d32;
+    }
+    .weather-icon-lg {
+        width: 120px;
+        filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+    }
+    .weather-stat {
+        background: #f8fbf8;
+        padding: 15px;
+        border-radius: 15px;
+        text-align: center;
+    }
+    .weather-stat i {
+        font-size: 1.5rem;
+        color: #2e7d32;
+        display: block;
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="weather-hero text-center" data-aos="fade-down">
+    <div class="container">
+        <h1 class="fw-bold display-4 mb-3">Agricultural Weather Outlook</h1>
+        <p class="lead opacity-90">Plan your harvest with precision using localized data.</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <!-- Search and Current Weather -->
+    <div class="weather-card-main shadow-lg mb-5" data-aos="fade-up">
+        <div class="row align-items-center">
+            <div class="col-lg-5 border-end pe-lg-5 mb-4 mb-lg-0">
+                <h4 class="fw-bold mb-4">Check Your Location</h4>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                            <i class="bi bi-geo-alt text-success"></i>
+                        </span>
+                        {{ form.location(class="form-control border-start-0 rounded-end-pill py-3", placeholder="Enter City Name...") }}
+                    </div>
+                    <button type="submit" class="btn btn-success rounded-pill w-100 py-3 fw-bold shadow-sm">
+                        <i class="bi bi-search"></i> Update Forecast
+                    </button>
+                </form>
+            </div>
+
+            <div class="col-lg-7 ps-lg-5">
+                {% if current_weather %}
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="fw-bold mb-0">{{ current_weather.location }}</h2>
+                            <p class="text-muted mb-0">{{ current_weather.description | title }}</p>
+                        </div>
+                        <img class="weather-icon-lg" src="https://openweathermap.org/img/wn/{{ current_weather.icon }}@4x.png" alt="Weather icon">
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="weather-stat">
+                                <i class="bi bi-thermometer-half"></i>
+                                <span class="fw-bold d-block">{{ current_weather.temperature }}°C</span>
+                                <small class="text-muted">Temp</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="weather-stat">
+                                <i class="bi bi-droplets"></i>
+                                <span class="fw-bold d-block">{{ current_weather.humidity }}%</span>
+                                <small class="text-muted">Humidity</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="weather-stat">
+                                <i class="bi bi-wind"></i>
+                                <span class="fw-bold d-block">{{ current_weather.wind_speed }} m/s</span>
+                                <small class="text-muted">Wind</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="weather-stat">
+                                <i class="bi bi-brightness-high"></i>
+                                <span class="fw-bold d-block">Clear</span>
+                                <small class="text-muted">Visibility</small>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-cloud-sun fs-1 text-muted d-block mb-3"></i>
+                        <p class="text-muted">Search for a location to see current conditions.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 5-Day Forecast -->
+    {% if weather_data and weather_data.list %}
+    <h3 class="fw-bold mb-4 ms-2" data-aos="fade-right">5-Day Extension</h3>
+    <div class="row g-4 overflow-auto flex-nowrap pb-4" style="scrollbar-width: none;">
+        {% for day in weather_data.list[::8] %} <!-- Show every 8th item (once per day) -->
+        <div class="col-10 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="{{ loop.index0 * 100 }}">
+            <div class="forecast-card shadow-sm text-center">
+                <p class="fw-bold text-success mb-2">{{ day.dt_txt.split(' ')[0] }}</p>
+                <img src="https://openweathermap.org/img/wn/{{ day.weather[0].icon }}@2x.png" class="mb-2" width="70" alt="Icon">
+                <h5 class="fw-bold mb-1">{{ day.main.temp }}°C</h5>
+                <p class="text-muted small mb-0">{{ day.weather[0].description | title }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

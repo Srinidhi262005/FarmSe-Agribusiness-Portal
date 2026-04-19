@@ -1,0 +1,37 @@
+<!-- templates/monitor_transactions.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-success">Monitor Transactions</h2>
+
+    {% if orders %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Buyer</th>
+                <th>Crop</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Date Ordered</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.buyer_name }}</td>
+                <td>{{ order.crop_name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>₹{{ order.total_price }}</td>
+                <td>{{ order.date_ordered.strftime('%Y-%m-%d') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">No transactions found.</div>
+    {% endif %}
+</div>
+{% endblock %}

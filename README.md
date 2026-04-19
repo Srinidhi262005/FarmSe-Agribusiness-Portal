@@ -1,5 +1,10 @@
 # FarmSe Agribusiness Portal
 
+## Live Demo
+A live demo of this app will be available at: `https://your-render-service-name.onrender.com`
+
+> Replace the placeholder URL above with the real Render URL after deployment.
+
 FarmSe is a full-stack web-based agribusiness platform designed to connect farmers and buyers through a digital marketplace. It eliminates middlemen, enabling farmers to sell crops directly while buyers can easily browse and purchase agricultural products. The platform also integrates AI-based crop prediction and real-time weather insights to support smarter farming decisions and improve productivity.
 
 ## Features

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: FarmSe-Agribusiness-Portal
+    env: python
+    plan: free
+    branch: render-ready
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    healthCheckPath: /
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: DATABASE_URI
+        value: ""
+      - key: SECRET_KEY
+        value: ""

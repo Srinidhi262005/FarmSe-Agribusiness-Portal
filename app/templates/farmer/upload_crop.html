@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block title %}Sell Your Crop | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .upload-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        border: none;
+    }
+    .section-title {
+        color: #2e7d32;
+        font-weight: 700;
+        border-bottom: 2px solid #e8f5e9;
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #444;
+    }
+    .form-control {
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #dee2e6;
+    }
+    .form-control:focus {
+        border-color: #2e7d32;
+        box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.1);
+    }
+    .btn-upload {
+        background: #2e7d32;
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-upload:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        color: white;
+    }
+</style>
+
+<div class="container upload-container">
+    <div class="form-card shadow-lg" data-aos="fade-up">
+        <h2 class="text-center mb-4"><i class="bi bi-plus-circle-fill text-success"></i> List Your Crop for Sale</h2>
+        <p class="text-center text-muted mb-5">Fill in the details below to reach thousands of buyers instantly.</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label">Crop Name</label>
+                    {{ form.crop_name(class="form-control", placeholder="e.g. Basmati Rice") }}
+                    {% for error in form.crop_name.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Quantity (kg)</label>
+                    {{ form.quantity(class="form-control", placeholder="500") }}
+                    {% for error in form.quantity.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Price per kg (₹)</label>
+                    {{ form.price(class="form-control", placeholder="65.00") }}
+                    {% for error in form.price.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    {{ form.description(class="form-control", rows="4", placeholder="Tell buyers about the quality, variety, and organic status of your crop...") }}
+                    {% for error in form.description.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Harvest Date</label>
+                    {{ form.harvest_date(class="form-control", type="date") }}
+                    {% for error in form.harvest_date.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    {{ form.location(class="form-control", placeholder="City, State") }}
+                    {% for error in form.location.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Crop Image <span class="text-muted fw-normal">(Optional - we'll auto-generate one if empty!)</span></label>
+                    {{ form.image(class="form-control", accept="image/*") }}
+                    {% for error in form.image.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-upload">
+                    <i class="bi bi-cloud-arrow-up"></i> List Crop Now
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Recent Crops Table -->
+    <div class="mt-5 card shadow-sm border-0 rounded-4 overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-header bg-light py-3 px-4">
+            <h5 class="mb-0 fw-bold text-success"><i class="bi bi-list-task"></i> Your Recent Listings</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="px-4">Crop</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Location</th>
+                        <th class="text-end px-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for crop in crops %}
+                    <tr>
+                        <td class="px-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success bg-opacity-10 text-success p-2 rounded-3 me-3">
+                                    <i class="bi bi-flower1"></i>
+                                </div>
+                                <span class="fw-bold">{{ crop.name }}</span>
+                            </div>
+                        </td>
+                        <td>{{ crop.quantity }} kg</td>
+                        <td class="fw-bold text-success">₹{{ crop.price }}</td>
+                        <td>{{ crop.location }}</td>
+                        <td class="text-end px-4">
+                            <a href="{{ url_for('main.edit_crop', crop_id=crop.id) }}" class="btn btn-sm btn-outline-warning rounded-pill">Edit</a>
+                            <form action="{{ url_for('main.delete_crop', crop_id=crop.id) }}" method="POST" style="display:inline;">
+                                {{ form.hidden_tag() }}
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill ms-1">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                            You haven't listed any crops yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

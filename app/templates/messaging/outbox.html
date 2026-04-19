@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Sent Messages</h2>
+
+<ul>
+    {% for msg in messages %}
+    <li>
+        <strong>To:</strong> {{ msg.recipient.username }} <br>
+        <strong>At:</strong> {{ msg.timestamp.strftime('%Y-%m-%d %H:%M') }} <br>
+        <p>{{ msg.content }}</p>
+        <a href="{{ url_for('main.chat', user_id=msg.recipient.id) }}">Chat</a>
+    </li>
+    {% else %}
+    <p>No sent messages.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

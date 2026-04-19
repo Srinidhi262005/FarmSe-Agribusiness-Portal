@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block title %}Secure Checkout | FarmSe{% endblock %}
+
+{% block content %}
+<style>
+    .checkout-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+    .checkout-card {
+        background: white;
+        border-radius: 30px;
+        border: none;
+        overflow: hidden;
+    }
+    .checkout-header {
+        background: #f8fbf8;
+        padding: 40px;
+        text-align: center;
+        border-bottom: 1px solid #edf2ed;
+    }
+    .payment-option {
+        border: 2px solid #edf2ed;
+        border-radius: 20px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .payment-option:hover {
+        border-color: #2e7d32;
+        background: #f8fbf8;
+    }
+    .payment-option.active {
+        border-color: #2e7d32;
+        background: #f1f8f1;
+    }
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: #666;
+    }
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px dashed #edf2ed;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2e7d32;
+    }
+    .btn-pay {
+        background: #2e7d32;
+        color: white;
+        padding: 18px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: none;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    .btn-pay:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+        color: white;
+    }
+</style>
+
+<div class="container checkout-container">
+    <div class="checkout-card shadow-lg" data-aos="fade-up">
+        <div class="checkout-header">
+            <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex p-3 mb-3">
+                <i class="bi bi-shield-lock-fill fs-3"></i>
+            </div>
+            <h2 class="fw-bold mb-1">Secure Checkout</h2>
+            <p class="text-muted">Review your order and complete the transaction.</p>
+        </div>
+
+        <div class="p-5">
+            <div class="row g-5">
+                <!-- Order Summary -->
+                <div class="col-lg-6">
+                    <h5 class="fw-bold mb-4">Order Summary</h5>
+                    <div class="summary-item">
+                        <span>Product</span>
+                        <span class="fw-bold">{{ order.crop.name }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Quantity</span>
+                        <span class="fw-bold">{{ order.quantity }} kg</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Price per kg</span>
+                        <span class="fw-bold">₹{{ order.crop.price }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Platform Fee</span>
+                        <span class="fw-bold text-success">FREE</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total Due</span>
+                        <span>₹{{ order.total_price }}</span>
+                    </div>
+
+                    <div class="mt-5 p-4 bg-light rounded-4">
+                        <small class="text-muted d-block mb-2"><i class="bi bi-info-circle"></i> Note:</small>
+                        <p class="small mb-0">This is a secure peer-to-peer transaction. Your payment will be held until the farmer approves the order.</p>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="col-lg-6 border-start ps-lg-5">
+                    <h5 class="fw-bold mb-4">Payment Method</h5>
+                    
+                    <div class="payment-option active mb-4">
+                        <div class="bg-success text-white rounded-circle p-2" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-check2"></i>
+                        </div>
+                        <div>
+                            <span class="fw-bold d-block">FarmSe Wallet / UPI</span>
+                            <small class="text-muted">Direct farmer settlement</small>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted">CARD DETAILS (SIMULATED)</label>
+                            <div class="p-3 bg-light rounded-3 text-muted small">
+                                <i class="bi bi-credit-card-2-front me-2"></i> **** **** **** 4242
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-pay shadow-sm mb-3">
+                            Confirm & Pay ₹{{ order.total_price }}
+                        </button>
+                        
+                        <p class="text-center text-muted small mb-4">
+                            <i class="bi bi-lock-fill"></i> SSL Encrypted Payment
+                        </p>
+
+                        <div class="text-center pt-3 border-top">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" height="15" class="me-3 opacity-25">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" height="15" class="opacity-25">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
